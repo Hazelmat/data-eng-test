@@ -1,5 +1,4 @@
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.metric.counter import CountingTransform
 from src.metric.utils import get_counter
@@ -38,8 +37,13 @@ def format_clinical(element):
     return key, {"clinical_trials": value["clinical_trials"]}
 
 
-def run(drugs_input_uri: str, pubmed_input_uri: str, clinical_trials_input_uri: str, output_uri: str):
-    with beam.Pipeline(options=PipelineOptions()) as p:
+def run(
+    drugs_input_uri: str,
+    pubmed_input_uri: str,
+    clinical_trials_input_uri: str,
+    output_uri: str,
+):
+    with beam.Pipeline() as p:
         drugs = (
             p
             | "Read Drugs" >> beam.io.ReadFromParquet(f"{drugs_input_uri}/*")

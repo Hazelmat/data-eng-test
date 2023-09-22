@@ -18,10 +18,6 @@ install:
 	pip install -r requirements-dev.txt
 	pip install -r requirements.txt
 
-docker:
-	@echo -n "Building docker image with tag $(TAG)"
-	docker build -f Dockerfile --platform linux/x86_64 -t eu.gcr.io/servier-data/mentions_pipeline:$(TAG) .
-
 test:
 	pytest tests
 
@@ -31,8 +27,7 @@ clean:
 	rm -rf .mypy_cache/
 
 run:
-	pyflyte run src/workflow/drugs_workflow.py drugs_workflow --input_file src/resources/drugs.csv --prefix output
-	pyflyte run src/workflow/clinical_trials_workflow.py clinical_trials_workflow --input_file src/resources/clinical_trials.csv --prefix output
-	pyflyte run src/workflow/pubmed_workflow.py pubmed_workflow --input_file src/resources/pubmed.csv --prefix output
-	pyflyte run src/workflow/pubmed_workflow.py pubmed_workflow --input_file src/resources/pubmed.json --prefix output
-	pyflyte run src/workflow/drugs_mentions_workflow.py drugs_mentions_workflow --drugs_input_uri output/drugs --pubmed_input_uri  output/pubmed --clinical_trials_input_uri output/clinical_trials --prefix output
+	@echo -n "Building docker image with tag $(TAG)"
+	docker build -f Dockerfile --platform linux/x86_64 -t eu.gcr.io/servier-data/mentions_pipeline:$(TAG) .
+	@echo -n "Running docker image with tag $(TAG)"
+	docker run eu.gcr.io/servier-data/mentions_pipeline:$(TAG)

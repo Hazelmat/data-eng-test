@@ -1,0 +1,1 @@
+pyflyte run src/workflow/drugs_mentions_workflow.py drugs_mentions_one_click_workflow --drugs_input src/resources/drugs.csv --pubmed_input  src/resources/pubmed.csv,src/resources/pubmed.json --clinical_trials_input src/resources/clinical_trials.csv --prefix output

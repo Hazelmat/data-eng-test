@@ -3,7 +3,6 @@ import json
 from io import StringIO
 
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.metric.counter import CountingTransform
 from src.metric.utils import get_counter
@@ -29,9 +28,6 @@ def determine_file_type(filename):
         return "csv"
     else:
         raise ValueError(f"Unsupported file type for {filename}")
-
-
-# Open the file and read its content
 
 
 def read_input_file(p, filename):
@@ -60,7 +56,7 @@ class ParseCsvDoFn(beam.DoFn):
 
 
 def run(input_file: str, output_uri: str):
-    with beam.Pipeline(options=PipelineOptions()) as p:
+    with beam.Pipeline() as p:
         input_count = read_input_file(p, filename=input_file)
 
         transformed = (

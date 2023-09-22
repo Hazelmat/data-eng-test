@@ -1,5 +1,4 @@
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.metric.counter import CountingTransform
 from src.metric.utils import get_counter
@@ -13,7 +12,7 @@ def transform_row(row):
 
 
 def run(input_csv: str, output_uri: str):
-    with beam.Pipeline(options=PipelineOptions()) as p:
+    with beam.Pipeline() as p:
         input_count = (
             p
             | "Read CSV" >> beam.io.ReadFromText(input_csv, skip_header_lines=1)

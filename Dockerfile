@@ -8,6 +8,7 @@ ENV PYTHONPATH /ROOT
 
 COPY requirements.txt ./
 COPY requirements-dev.txt ./
+COPY entrypoint.sh entrypoint.sh
 
 RUN pip install -r ./requirements.txt
 
@@ -15,6 +16,11 @@ RUN pip install -r ./requirements.txt
 COPY src $PYTHONPATH/src
 
 ARG tag
+
+
+ENTRYPOINT ["bash", "entrypoint.sh"]
+
+
 
 
 

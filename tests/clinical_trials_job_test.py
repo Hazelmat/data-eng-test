@@ -13,7 +13,14 @@ from src.pipeline.clinical_trials_job import (ParseCsvDoFn, filter_empty_id,
 class TestParseCsvDoFn(unittest.TestCase):
     def test_process(self):
         test_input = StringIO('"1","Title","2022-09-21","Journal"')
-        expected_output = [{"id": "1", "scientific_title": "Title", "date": "2022-09-21", "journal": "Journal"}]
+        expected_output = [
+            {
+                "id": "1",
+                "scientific_title": "Title",
+                "date": "2022-09-21",
+                "journal": "Journal",
+            }
+        ]
 
         with TestPipeline() as p:
             actual_output = (
@@ -24,7 +31,12 @@ class TestParseCsvDoFn(unittest.TestCase):
 
 class TestTransformRow(unittest.TestCase):
     def test_transform_row(self):
-        input_row = {"id": "1", "scientific_title": " Title émeraude", "date": "09/09/2021", "journal": " Journal "}
+        input_row = {
+            "id": "1",
+            "scientific_title": " Title émeraude",
+            "date": "09/09/2021",
+            "journal": " Journal ",
+        }
         expected_output = {
             "id": "1",
             "scientific_title": "Title emeraude",

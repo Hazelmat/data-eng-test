@@ -2,7 +2,6 @@ import csv
 from io import StringIO
 
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
 
 from src.metric.counter import CountingTransform
 from src.metric.utils import get_counter
@@ -13,7 +12,12 @@ from src.pipeline.utils import convert_to_date, sanitize
 class ParseCsvDoFn(beam.DoFn):
     def process(self, element):
         for row in csv.reader(StringIO(element)):
-            yield {"id": row[0], "scientific_title": row[1], "date": row[2], "journal": row[3]}
+            yield {
+                "id": row[0],
+                "scientific_title": row[1],
+                "date": row[2],
+                "journal": row[3],
+            }
 
 
 def transform_row(row):
@@ -27,7 +31,7 @@ def filter_empty_id(record):
 
 
 def run(input_file: str, output_uri: str):
-    with beam.Pipeline(options=PipelineOptions()) as p:
+    with beam.Pipeline() as p:
         input_count = (
             p
             | "Read CSV" >> beam.io.ReadFromText(input_file, skip_header_lines=1)

@@ -14,7 +14,11 @@ def test_process_pubmed():
         ]
 
         records = [
-            {"title": "This title has Drug1", "journal": "Journal1", "date": datetime.date(2023, 9, 21)},
+            {
+                "title": "This title has Drug1",
+                "journal": "Journal1",
+                "date": datetime.date(2023, 9, 21),
+            },
         ]
 
         expected_output = [{"Code1": {"pubmed": [{"journal1": "2023-09-21"}]}}]
@@ -33,7 +37,11 @@ def test_process_clinical_trials():
         ]
 
         records = [
-            {"scientific_title": "This title has Drug1", "journal": "Journal1", "date": datetime.date(2023, 9, 21)},
+            {
+                "scientific_title": "This title has Drug1",
+                "journal": "Journal1",
+                "date": datetime.date(2023, 9, 21),
+            },
         ]
 
         expected_output = [{"Code1": {"clinical_trials": [{"journal1": "2023-09-21"}]}}]
@@ -43,7 +51,11 @@ def test_process_clinical_trials():
             drugs_mentions_graph_job.process_clinical_trials, records
         )
 
-        assert_that(actual_output, equal_to(expected_output), label="Check Process Clinical Trials")
+        assert_that(
+            actual_output,
+            equal_to(expected_output),
+            label="Check Process Clinical Trials",
+        )
 
 
 def test_merge_dicts():
@@ -59,7 +71,12 @@ def test_merge_dicts():
         ]
 
         expected_output = [
-            {"Code1": {"pubmed": [{"journal1": "2023-09-21"}], "clinical_trials": [{"journal2": "2023-09-21"}]}}
+            {
+                "Code1": {
+                    "pubmed": [{"journal1": "2023-09-21"}],
+                    "clinical_trials": [{"journal2": "2023-09-21"}],
+                }
+            }
         ]
 
         input_collection = p | "Create Input" >> beam.Create(input_data)
