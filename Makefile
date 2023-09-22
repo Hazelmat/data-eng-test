@@ -6,7 +6,7 @@ TAG:=dev$(shell echo `date '+%Y%m%d%H%M%S'`)
 
 help:
 	@echo "---------------HELP-----------------"
-	@echo "To setup the project type make setup"
+	@echo "To setup the project type make install"
 	@echo "To test the project type make test"
 	@echo "To run the project type make run"
 	@echo "------------------------------------"
