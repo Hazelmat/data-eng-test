@@ -63,15 +63,15 @@ Also regarding drug mentions graph output, when this scales to millions or 100s 
 running adhoc queries/tasks on top of a single json file won't be possible, to improve this part,
 I propose to load this graph into BigQuery for analytical purposes 
 
-Finally, this is by any means an exhaustive list to productionize this code, but this is some more 
-items that needs to be added:
-- Deploying workflows via CI
-- Build and testing CI pipelines at PR build
-- Counter validation
-- Improving input data sanitizing checks
-- Sensors for inputs
-- Beam pipeline option to enable Dataflow Runner (Or any scalable runner) 
-- Increase coverage
+Finally, this is by no means an exhaustive list for productionizing this code, but here are some additional items that need to be addressed:
+
+- Deploying workflows via Continuous Integration (CI)
+- Building and testing CI pipelines at Pull Request (PR) build
+- Implementing counter validation
+- Improving checks for input data sanitization
+- Adding sensors for inputs
+- Providing a Beam pipeline option to enable Dataflow Runner (or any other scalable runner)
+- Increasing coverage
 
 
 ## 4. Ad-hoc Processing
