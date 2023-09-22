@@ -59,6 +59,17 @@ this is possible using GKE and Flyte kubernetes operator to manage flyte cluster
 orchestration and add scheduling capabilities which will be necessary when running this 
 pipelines at scale and in production.
 
+This is by any means an exhaustive list to productionize this code, but this is some more 
+items that needs to be added:
+- Deploying workflows via CI
+- Build and testing CI pipelines at PR build
+- Counter validation
+- Improving input data sanitizing checks
+- Sensors for inputs
+- Beam pipeline option to enable Dataflow Runner (Or any scalable runner) 
+- Increase coverage
+
+
 ## 4. Ad-hoc Processing
 To get the journal with the most different drugs mentions, a jupyter notebook 
 `labs/journal_with_most_distinct_drugs.ipynb` is made available 
