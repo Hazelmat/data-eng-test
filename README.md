@@ -37,6 +37,7 @@ key for each entry is the drug ID, and the associated value is an object detaili
 
 ## 2. Implementation
 ![img_1.png](docs/actual.png)
+
 This project uses Apache Beam python SDK to build 4 pipelines that run on DirectRunner:
 - clinical_trials_job.py
 - drugs_job.py
@@ -70,6 +71,5 @@ The SQL queries are made avaible in `docs/ex1.sql` and `docs/ex2.sql`
 Setup a new virtual environment with Python 3.9 then
 - Run `Make install` to install dev requirements
 - Run `Make test` to run tests
-- Run `Make docker` to build docker
 - Run `Make run` to run the flyte worklow running all pipelines
 

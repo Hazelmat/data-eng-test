@@ -57,7 +57,7 @@ def run(
         )
         clinical_trials = (
             p
-            | "Read ClinicalTrials" >> beam.io.ReadFromParquet(f"" f"{clinical_trials_input_uri}/*")
+            | "Read ClinicalTrials" >> beam.io.ReadFromParquet(f"{clinical_trials_input_uri}/*")
             | ("Count Clinical trials input") >> CountingTransform("input_clinical_trials_count")
         )
 
