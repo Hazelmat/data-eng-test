@@ -59,7 +59,11 @@ this is possible using GKE and Flyte kubernetes operator to manage flyte cluster
 orchestration and add scheduling capabilities which will be necessary when running this 
 pipelines at scale and in production.
 
-This is by any means an exhaustive list to productionize this code, but this is some more 
+Also regarding drug mentions graph output, when this scales to millions or 100s of millions rows,
+running adhoc queries/tasks on top of a single json file won't be possible, to improve this part,
+I propose to load this graph into BigQuery for analytical purposes 
+
+Finally, this is by any means an exhaustive list to productionize this code, but this is some more 
 items that needs to be added:
 - Deploying workflows via CI
 - Build and testing CI pipelines at PR build
