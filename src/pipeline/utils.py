@@ -9,7 +9,7 @@ def sanitize(entry: str) -> str:
         entry = bytes(entry, "utf-8").decode("unicode_escape").strip()
     except UnicodeDecodeError as e:
         print(f"Error decoding string: {e}")
-    entry = entry.replace("Ã(", "").replace('"', "").split(".")[0]
+    entry = entry.replace('"', "").split(".")[0]
     return entry
 
 

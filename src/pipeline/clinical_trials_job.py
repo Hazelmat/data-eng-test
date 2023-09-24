@@ -10,7 +10,18 @@ from src.pipeline.utils import convert_to_date, sanitize
 
 
 class ParseCsvDoFn(beam.DoFn):
+    """
+    A DoFn class for parsing CSV lines into dictionaries.
+    """
+
     def process(self, element):
+        """
+        Parse a CSV row into a dictionary.
+
+        :param str element: A single row from the CSV file.
+        :yield: A dictionary representing the parsed CSV row.
+        :rtype: dict
+        """
         for row in csv.reader(StringIO(element)):
             yield {
                 "id": row[0],
@@ -21,16 +32,26 @@ class ParseCsvDoFn(beam.DoFn):
 
 
 def transform_row(row):
+    """
+    Transform a row by sanitizing its values and converting date strings to date objects.
+
+    :param dict row: A dictionary representing a row.
+    :return: The transformed row.
+    :rtype: dict
+    """
     row = {k: sanitize(v) for k, v in row.items()}
     row["date"] = convert_to_date(row["date"])
     return row
 
 
-def filter_empty_id(record):
-    return record["id"] != ""
-
-
 def run(input_file: str, output_uri: str):
+    """
+    Run the Beam pipeline to process and transform the input CSV file
+    and write the output to a Parquet file.
+
+    :param str input_file: The path to the input CSV file.
+    :param str output_uri: The URI where the output Parquet file will be written.
+    """
     with beam.Pipeline() as p:
         input_count = (
             p

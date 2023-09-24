@@ -20,13 +20,13 @@ key for each entry is the drug ID, and the associated value is an object detaili
   "drugID": {
     "pubmed": [
       {
-        "journalName": "date"
+        "journalName": {"date": "%y-%m%d", "title": "...{drugId}..."
       },
       ...
     ],
     "clinical_trials": [
       {
-        "journalName": "date"
+        "journalName": {"date": "%y-%m%d", "title": "...{drugId}..."
       },
       ...
     ]
@@ -45,8 +45,9 @@ This project uses Apache Beam python SDK to build 4 pipelines that run on Direct
 - drugs_mentions_graph_job.py
 
 These 4 aforementioned pipleines are orchestrated with Flyte, each pipeline has it's own task 
-and workflow, and to simplify usage there's a workflow that orchestrate all pipleines at once 
-and output a single file representing the drug mentions in a json file
+and workflow, this help make the different pipelines logic modulable, and to 
+simplify usage there's a workflow that orchestrate all pipleines at once and output a single 
+file representing the drug mentions in a json file
 ## 3. Scaling
 ![img.png](docs/scaling.png)
 To scale this pipeline, many foundations are there. By using Beam and Parquet, it's possible 
@@ -61,17 +62,26 @@ pipelines at scale and in production.
 
 Also regarding drug mentions graph output, when this scales to millions or 100s of millions rows,
 running adhoc queries/tasks on top of a single json file won't be possible, to improve this part,
-I propose to load this graph into BigQuery for analytical purposes 
+I propose to load this graph into a fact table into a datawarehouse like BigQuery for analytical 
+purposes and adhoc queries, for this I propose this schema for the fact table:
+
+![img.png](docs/output_schema.png)
+
+This will help flatten the relationship between drugs, source of publications (publmed, clinical 
+trials) and journal name and the date and mentions in journal title.
 
 Finally, this is by no means an exhaustive list for productionizing this code, but here are some additional items that need to be addressed:
 
+- Sanitizing checks the inputs needs to be improved, this is a first pass and didn't spend enough 
+  time to clean, deduplicate, infer column values
+- Ensure Flyte Tasks are idempotent by incorporating dates and ensuring output is reproducible for a given execution date
 - Deploying workflows via Continuous Integration (CI)
 - Building and testing CI pipelines at Pull Request (PR) build
-- Implementing counter validation
-- Improving checks for input data sanitization
+- Implementing counter validation, count dropped/filtred rows
 - Adding sensors for inputs
 - Providing a Beam pipeline option to enable Dataflow Runner (or any other scalable runner)
 - Increasing coverage
+- Increase coverage of docstring 
 
 
 ## 4. Ad-hoc Processing

@@ -21,7 +21,9 @@ def test_process_pubmed():
             },
         ]
 
-        expected_output = [{"Code1": {"pubmed": [{"journal1": "2023-09-21"}]}}]
+        expected_output = [
+            ("Code1", {"pubmed": [{"journal1": {"date": "2023-09-21", "title": "This title has " "Drug1"}}]})
+        ]
 
         input_collection = p | "Create Input" >> beam.Create(input_data)
         actual_output = input_collection | "Process PubMed" >> beam.Map(
@@ -44,7 +46,9 @@ def test_process_clinical_trials():
             },
         ]
 
-        expected_output = [{"Code1": {"clinical_trials": [{"journal1": "2023-09-21"}]}}]
+        expected_output = [
+            ("Code1", {"clinical_trials": [{"journal1": {"date": "2023-09-21", "title": "This " "title has Drug1"}}]})
+        ]
 
         input_collection = p | "Create Input" >> beam.Create(input_data)
         actual_output = input_collection | "Process Clinical Trials" >> beam.Map(
@@ -64,8 +68,10 @@ def test_merge_dicts():
             (
                 "Code1",
                 {
-                    "pubmed": [{"pubmed": [{"journal1": "2023-09-21"}]}],
-                    "clinical_trials": [{"clinical_trials": [{"journal2": "2023-09-21"}]}],
+                    "pubmed": [{"pubmed": [{"journal1": {"date": "2023-09-21", "title": "title1 " "Code1"}}]}],
+                    "clinical_trials": [
+                        {"clinical_trials": [{"journal2": {"date": "2023-09-21", "title": "title2 Code1"}}]}
+                    ],
                 },
             )
         ]
@@ -73,8 +79,8 @@ def test_merge_dicts():
         expected_output = [
             {
                 "Code1": {
-                    "pubmed": [{"journal1": "2023-09-21"}],
-                    "clinical_trials": [{"journal2": "2023-09-21"}],
+                    "pubmed": [{"journal1": {"date": "2023-09-21", "title": "title1 Code1"}}],
+                    "clinical_trials": [{"journal2": {"date": "2023-09-21", "title": "title2 Code1"}}],
                 }
             }
         ]

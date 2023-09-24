@@ -5,36 +5,53 @@ from src.metric.utils import get_counter
 
 
 def process_pubmed(drug, records):
+    """
+    Process PubMed records and find mentions of the drug.
+
+    :param dict drug: A dictionary representing the drug.
+    :param list records: A list of dictionaries representing PubMed records.
+    :return: A dictionary containing the ATC code of the drug and the mentions in PubMed.
+    :rtype: tuple keyed by DrugId
+    """
     mentions = []
     for record in records:
         if drug["drug"].lower() in record["title"].lower():
-            mentions.append({record["journal"].lower(): record["date"].isoformat()})
-    return {drug["atccode"]: {"pubmed": mentions}}
+            mentions.append(
+                {record["journal"].lower(): {"date": record["date"].isoformat(), "title": record["title"]}}
+            )
+    return (drug["atccode"], {"pubmed": mentions})
 
 
 def process_clinical_trials(drug, records):
+    """
+    Process clinical trials records and find mentions of the drug.
+
+    :param dict drug: A dictionary representing the drug.
+    :param list records: A list of dictionaries representing clinical trials records.
+    :return: A dictionary containing the ATC code of the drug and the mentions in clinical trials.
+    :rtype: tuple keyed by DrugId
+    """
     mentions = []
     for record in records:
         if drug["drug"].lower() in record["scientific_title"].lower():
-            mentions.append({record["journal"].lower(): record["date"].isoformat()})
-    return {drug["atccode"]: {"clinical_trials": mentions}}
+            mentions.append(
+                {record["journal"].lower(): {"date": record["date"].isoformat(), "title": record["scientific_title"]}}
+            )
+    return (drug["atccode"], {"clinical_trials": mentions})
 
 
 def merge_dicts(data):
+    """
+    Merge PubMed and Clinical Trials dictionaries.
+
+    :param tuple data: A tuple containing the key and values dictionaries.
+    :return: A merged dictionary.
+    :rtype: dict
+    """
     key, values_dict = data
     pubmed_list = [item for sublist in values_dict["pubmed"] for item in sublist["pubmed"]]
     clinical_list = [item for sublist in values_dict["clinical_trials"] for item in sublist["clinical_trials"]]
     return {key: {"pubmed": pubmed_list, "clinical_trials": clinical_list}}
-
-
-def format_pub_med(element):
-    key, value = list(element.items())[0]
-    return key, {"pubmed": value["pubmed"]}
-
-
-def format_clinical(element):
-    key, value = list(element.items())[0]
-    return key, {"clinical_trials": value["clinical_trials"]}
 
 
 def run(
@@ -43,6 +60,14 @@ def run(
     clinical_trials_input_uri: str,
     output_uri: str,
 ):
+    """
+    Run the Beam pipeline.
+
+    :param str drugs_input_uri: URI of the input drugs data.
+    :param str pubmed_input_uri: URI of the input PubMed data.
+    :param str clinical_trials_input_uri: URI of the input Clinical Trials data.
+    :param str output_uri: URI where the output json data will be written.
+    """
     with beam.Pipeline() as p:
         drugs = (
             p
@@ -62,13 +87,11 @@ def run(
         )
 
         # Find mentions in PubMed and Clinical Trials
-        pubmed_res = drugs | "Map(mentioned_in_pubmed)" >> beam.Map(process_pubmed, beam.pvalue.AsIter(pubmed))
-        clinical_res = drugs | "Map(mentioned_in_clinical_trials)" >> beam.Map(
+        pubmed_pcol = drugs | "Map(mentioned_in_pubmed)" >> beam.Map(process_pubmed, beam.pvalue.AsIter(pubmed))
+        clinical_pcol = drugs | "Map(mentioned_in_clinical_trials)" >> beam.Map(
             process_clinical_trials, beam.pvalue.AsIter(clinical_trials)
         )
 
-        pubmed_pcol = pubmed_res | "Format pubmed" >> beam.Map(format_pub_med)
-        clinical_pcol = clinical_res | "Format clinical_pcol" >> beam.Map(format_clinical)
         joined_collections = (
             {"clinical_trials": clinical_pcol, "pubmed": pubmed_pcol}
             | beam.CoGroupByKey()
@@ -80,10 +103,10 @@ def run(
         ) | "Write to JSON" >> beam.io.WriteToText(output_uri, file_name_suffix=".json")
     result = p.run()
     result.wait_until_finish()
-    print(f"Input Drugs Count: {get_counter(result,'input_drugs_count')} ")
-    print(f"Input PubMed Count: {get_counter(result,'input_pubmed_count')} ")
-    print(f"Input ClinicalTrials Count: {get_counter(result,'input_clinical_trials_count')} ")
-    print(f"Output Count: {get_counter(result,'output_count')} ")
+    print(f"Input Drugs Count: {get_counter(result, 'input_drugs_count')} ")
+    print(f"Input PubMed Count: {get_counter(result, 'input_pubmed_count')} ")
+    print(f"Input ClinicalTrials Count: {get_counter(result, 'input_clinical_trials_count')} ")
+    print(f"Output Count: {get_counter(result, 'output_count')} ")
 
 
 if __name__ == "__main__":
