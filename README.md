@@ -38,16 +38,22 @@ key for each entry is the drug ID, and the associated value is an object detaili
 ## 2. Implementation
 ![img_1.png](docs/actual.png)
 
-This project uses Apache Beam python SDK to build 4 pipelines that run on DirectRunner:
-- clinical_trials_job.py
-- drugs_job.py
-- pubmed_job.py
-- drugs_mentions_graph_job.py
+This project utilizes the Apache Beam Python SDK to construct four pipelines that run on DirectRunner:
 
-These 4 aforementioned pipleines are orchestrated with Flyte, each pipeline has it's own task 
-and workflow, this help make the different pipelines logic modulable, and to 
-simplify usage there's a workflow that orchestrate all pipleines at once and output a single 
-file representing the drug mentions in a json file
+clinical_trials_job.py
+drugs_job.py
+pubmed_job.py
+drugs_mentions_graph_job.py
+The aforementioned four pipelines are orchestrated with Flyte, with each pipeline having its own task and workflow. This approach helps modularize the different pipeline logics, and to simplify usage, there is a workflow that orchestrates all pipelines at once, outputting a single file representing the drug mentions in a JSON format. The output file for each intermediate pipeline is in .Parquet format, facilitating the future scaling of downstream pipelines.
+
+Flyte is packaged in a Dockerfile, enabling any workflow to be run locally. Additionally, Beam 
+counters are used to monitor and collect metrics from Beam jobs, paving the way for scaling these 
+pipelines with Dataflow and integrating job metrics into Stackdriver.
+
+Lastly, a pre-commit configuration is in place to ensure code style and formatting for each 
+commit. This can also be executed using the makefile, which aids in running the workflow by 
+building a docker image and running the one-click workflow, running tests, and 
+formatting with `make format`
 ## 3. Scaling
 ![img.png](docs/scaling.png)
 To scale this pipeline, many foundations are there. By using Beam and Parquet, it's possible 
