@@ -40,10 +40,11 @@ key for each entry is the drug ID, and the associated value is an object detaili
 
 This project utilizes the Apache Beam Python SDK to construct four pipelines that run on DirectRunner:
 
-clinical_trials_job.py
-drugs_job.py
-pubmed_job.py
-drugs_mentions_graph_job.py
+- clinical_trials_job.py
+- drugs_job.py
+- pubmed_job.py
+- drugs_mentions_graph_job.py
+
 The aforementioned four pipelines are orchestrated with Flyte, with each pipeline having its own task and workflow. This approach helps modularize the different pipeline logics, and to simplify usage, there is a workflow that orchestrates all pipelines at once, outputting a single file representing the drug mentions in a JSON format. The output file for each intermediate pipeline is in .Parquet format, facilitating the future scaling of downstream pipelines.
 
 Flyte is packaged in a Dockerfile, enabling any workflow to be run locally. Additionally, Beam 
